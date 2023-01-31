@@ -1,0 +1,73 @@
+syntax = "proto3";
+package protobuf;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+service Worker {
+	//service from master
+	rpc ShutDown (emptyRequest) returns (shutDownResponse) {}
+	rpc PEval (emptyRequest) returns (pEvalResponse) {}
+	rpc IncEval (emptyRequest) returns (incEvalResponse) {}
+	rpc ExchangeMessage (emptyRequest) returns (exchangeResponse) {}
+	rpc Assemble (emptyRequest) returns (assembleResponse) {}
+
+	//service from worker
+	rpc MessageSend(messageRequest) returns (emptyResponse) {}
+	rpc SyncVal(syncRequest) returns (emptyResponse) {}
+
+	// fault tolerance
+	rpc BeatHeart(emptyRequest) returns (emptyResponse) {}
+//	rpc Terminate(emptyRequest) returns (emptyResponse) {}
+	rpc Recovery(recoveryRequest) returns (emptyResponse) {}
+}
+
+message emptyRequest {}
+message emptyResponse {}
+
+message shutDownResponse {
+	int32 iterationNum = 1;
+}
+
+message exchangeResponse {
+	bool ok = 1;
+}
+
+message pEvalResponse {
+	bool ok = 1;
+}
+
+message incEvalResponse {
+	bool update = 1;
+}
+
+message assembleResponse {
+	bool ok = 1;
+}
+
+message messageRequest {
+	repeated messageStruct pair = 1;
+	bool calculateStep = 2;
+}
+
+message messageStruct {
+	int32 nodeID = 1;
+	float val = 2;
+}
+
+message syncRequest {
+	repeated syncStruct pair = 1;
+}
+
+message syncStruct {
+	int32 nodeID = 1;
+	float val = 2;
+}
+
+message recoveryRequest {
+	int32 crash_id = 1;
+}

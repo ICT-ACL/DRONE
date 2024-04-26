@@ -1,0 +1,64 @@
+syntax = "proto3";
+package protobuf;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+
+service Master{
+  rpc Register(RegisterRequest) returns (RegisterResponse) {}
+  rpc SuperStepFinish(FinishRequest) returns (FinishResponse) {}
+  rpc CalculateFinish(CalculateFinishRequest) returns(CalculateFinishResponse) {}
+}
+
+message RegisterRequest {
+  int32 workerIndex = 1;
+}
+
+message RegisterResponse {
+  bool ok = 1;
+}
+
+message CalculateFinishRequest {
+  int32 workerIndex = 1;
+}
+
+message CalculateFinishResponse {
+  bool ok = 1;
+}
+
+message FinishRequest {
+  //duration time of aggregator
+  double aggregatorSeconds = 1;
+  int32 aggregatorOriSize = 2;
+  int32 aggregatorReducedSize = 3;
+
+  int64 iterationNum = 4;
+  //duration time of partial SSSP loop
+  double iterationSeconds = 5;
+  //duration time of combine message
+  double combineSeconds = 6;
+  //number of updated boarders node pair
+  int32 updatePairNum = 7;
+  //number of destinations which message send to
+  int32 dstPartitionNum = 8;
+  //duration of a worker send to message to all other workers
+  double allPeerSend = 9;
+  //size of worker to worker communication pairs
+  repeated workerCommunicationSize pairNum = 10;
+
+  int32 workerID = 11;
+  bool MessageToSend = 12;
+}
+
+message workerCommunicationSize {
+  int32 workerID = 1; //destination partition ID
+  int32 communicationSize = 2; //size of message to send
+}
+
+message FinishResponse {
+  bool ok = 1;
+}

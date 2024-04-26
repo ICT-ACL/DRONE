@@ -1,0 +1,4 @@
+/.idea/
+/DRONE/.idea/
+/DRONE/src/cuda/cmake-build-debug/
+/DRONE/src/cuda/.idea
